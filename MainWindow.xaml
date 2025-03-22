@@ -17,6 +17,18 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Column="0" Grid.Row="0" Name="InputDisplay"></Label>
+        </Grid>
+
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -32,29 +44,29 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <Button Grid.Column="0" Grid.Row="0">7</Button>
-            <Button Grid.Column="1" Grid.Row="0">8</Button>
-            <Button Grid.Column="2" Grid.Row="0">9</Button>
-            <Button Grid.Column="3" Grid.Row="0">DEL</Button>
-            <Button Grid.Column="4" Grid.Row="0">AC</Button>
+            <Button Grid.Column="0" Grid.Row="0" Name="Key7" Click="OnClickNumeral">7</Button>
+            <Button Grid.Column="1" Grid.Row="0" Name="Key8" Click="OnClickNumeral">8</Button>
+            <Button Grid.Column="2" Grid.Row="0" Name="Key9" Click="OnClickNumeral">9</Button>
+            <Button Grid.Column="3" Grid.Row="0" Name="KeyDel">DEL</Button>
+            <Button Grid.Column="4" Grid.Row="0" Name="KeyAc">AC</Button>
 
-            <Button Grid.Column="0" Grid.Row="1">4</Button>
-            <Button Grid.Column="1" Grid.Row="1">5</Button>
-            <Button Grid.Column="2" Grid.Row="1">6</Button>
-            <Button Grid.Column="3" Grid.Row="1">×</Button>
-            <Button Grid.Column="4" Grid.Row="1">÷</Button>
+            <Button Grid.Column="0" Grid.Row="1" Name="Key4" Click="OnClickNumeral">4</Button>
+            <Button Grid.Column="1" Grid.Row="1" Name="Key5" Click="OnClickNumeral">5</Button>
+            <Button Grid.Column="2" Grid.Row="1" Name="Key6" Click="OnClickNumeral">6</Button>
+            <Button Grid.Column="3" Grid.Row="1" Name="KeyMult">×</Button>
+            <Button Grid.Column="4" Grid.Row="1" Name="KeyDiv">÷</Button>
 
-            <Button Grid.Column="0" Grid.Row="2">1</Button>
-            <Button Grid.Column="1" Grid.Row="2">2</Button>
-            <Button Grid.Column="2" Grid.Row="2">3</Button>
-            <Button Grid.Column="3" Grid.Row="2">+</Button>
-            <Button Grid.Column="4" Grid.Row="2">-</Button>
+            <Button Grid.Column="0" Grid.Row="2" Name="Key1" Click="OnClickNumeral">1</Button>
+            <Button Grid.Column="1" Grid.Row="2" Name="Key2" Click="OnClickNumeral">2</Button>
+            <Button Grid.Column="2" Grid.Row="2" Name="Key3" Click="OnClickNumeral">3</Button>
+            <Button Grid.Column="3" Grid.Row="2" Name="KeyAdd">+</Button>
+            <Button Grid.Column="4" Grid.Row="2" Name="KeySub">-</Button>
 
-            <Button Grid.Column="0" Grid.Row="3">0</Button>
-            <Button Grid.Column="1" Grid.Row="3">.</Button>
-            <Button Grid.Column="2" Grid.Row="3">×10ˣ</Button>
-            <Button Grid.Column="3" Grid.Row="3">Ans</Button>
-            <Button Grid.Column="4" Grid.Row="3">=</Button>
+            <Button Grid.Column="0" Grid.Row="3" Name="Key0" Click="OnClickNumeral">0</Button>
+            <Button Grid.Column="1" Grid.Row="3" Name="KeyPoint">.</Button>
+            <Button Grid.Column="2" Grid.Row="3" Name="KeySciNot">×10ˣ</Button>
+            <Button Grid.Column="3" Grid.Row="3" Name="KeyAns">Ans</Button>
+            <Button Grid.Column="4" Grid.Row="3" Name="KeyEqual">=</Button>
         </Grid>
     </Grid>
 </Window>

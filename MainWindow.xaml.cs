@@ -16,9 +16,24 @@ namespace ScientficCalculator
     /// </summary>
     public partial class MainWindow : Window
     {
+        internal CalculatorMain Calculator { get; }
+
         public MainWindow()
         {
+            Calculator = new CalculatorMain();
             InitializeComponent();
+        }
+
+        public void OnClickNumeral(Button sender, RoutedEventArgs e)
+        {
+            //Button numeralButton = (Button)sender;
+
+
+        }
+
+        private void addToDisplay()
+        {
+
         }
     }
 }
