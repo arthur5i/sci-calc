@@ -8,32 +8,62 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static ScientificCalculator.OperatorType;
 
-namespace ScientficCalculator
+namespace ScientificCalculator
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        internal CalculatorMain Calculator { get; }
+        internal CalculatorMain Calculator { get; } = new CalculatorMain();
 
         public MainWindow()
         {
-            Calculator = new CalculatorMain();
             InitializeComponent();
         }
 
-        public void OnClickNumeral(Button sender, RoutedEventArgs e)
+        protected override void OnInitialized(EventArgs e)
         {
-            //Button numeralButton = (Button)sender;
-
-
+            base.OnInitialized(e);
+            DataContext = Calculator;
         }
 
-        private void addToDisplay()
+        public void OnClickNumeral(object sender, RoutedEventArgs e)
         {
+            Button button = (Button)sender;
+            int digit = button.Name switch
+            {
+                "Key0" => 0,
+                "Key1" => 1,
+                "Key2" => 2,
+                "Key3" => 3,
+                "Key4" => 4,
+                "Key5" => 5,
+                "Key6" => 6,
+                "Key7" => 7,
+                "Key8" => 8,
+                "Key9" => 9,
+                _ => 0
+            };
+            DisplayToken token = new NumeralToken(digit);
+            Calculator.Display.AddToken(token);
+        }
 
+        public void OnClickOperator(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            OperatorType type = button.Name switch
+            {
+                "KeyAdd" => Add,
+                "KeySub" => Subtract,
+                "KeyMult" => Multiply,
+                "KeyDiv" => Divide,
+                _ => Error
+            };
+            DisplayToken token = new OperatorToken(type);
+            Calculator.Display.AddToken(token);
         }
     }
 }

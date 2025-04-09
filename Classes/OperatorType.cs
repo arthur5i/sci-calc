@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScientficCalculator
+namespace ScientificCalculator
 {
     internal enum OperatorType
     {
-        Add, Subtract, Multiply, Divide
+        Add, Subtract, Multiply, Divide, Error
     }
 }

@@ -1,9 +1,9 @@
-﻿<Window x:Class="ScientficCalculator.MainWindow"
+﻿<Window x:Class="ScientificCalculator.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ScientficCalculator"
+        xmlns:local="clr-namespace:ScientificCalculator"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="250">
     <Grid>
@@ -26,7 +26,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Column="0" Grid.Row="0" Name="InputDisplay"></Label>
+            <Label Grid.Column="0" Grid.Row="0" Name="InputDisplay" Content="{Binding Path=Display.Content}"></Label>
         </Grid>
 
         <Grid Grid.Row="3">
@@ -53,14 +53,14 @@
             <Button Grid.Column="0" Grid.Row="1" Name="Key4" Click="OnClickNumeral">4</Button>
             <Button Grid.Column="1" Grid.Row="1" Name="Key5" Click="OnClickNumeral">5</Button>
             <Button Grid.Column="2" Grid.Row="1" Name="Key6" Click="OnClickNumeral">6</Button>
-            <Button Grid.Column="3" Grid.Row="1" Name="KeyMult">×</Button>
-            <Button Grid.Column="4" Grid.Row="1" Name="KeyDiv">÷</Button>
+            <Button Grid.Column="3" Grid.Row="1" Name="KeyMult" Click="OnClickOperator">×</Button>
+            <Button Grid.Column="4" Grid.Row="1" Name="KeyDiv" Click="OnClickOperator">÷</Button>
 
             <Button Grid.Column="0" Grid.Row="2" Name="Key1" Click="OnClickNumeral">1</Button>
             <Button Grid.Column="1" Grid.Row="2" Name="Key2" Click="OnClickNumeral">2</Button>
             <Button Grid.Column="2" Grid.Row="2" Name="Key3" Click="OnClickNumeral">3</Button>
-            <Button Grid.Column="3" Grid.Row="2" Name="KeyAdd">+</Button>
-            <Button Grid.Column="4" Grid.Row="2" Name="KeySub">-</Button>
+            <Button Grid.Column="3" Grid.Row="2" Name="KeyAdd" Click="OnClickOperator">+</Button>
+            <Button Grid.Column="4" Grid.Row="2" Name="KeySub" Click="OnClickOperator">-</Button>
 
             <Button Grid.Column="0" Grid.Row="3" Name="Key0" Click="OnClickNumeral">0</Button>
             <Button Grid.Column="1" Grid.Row="3" Name="KeyPoint">.</Button>

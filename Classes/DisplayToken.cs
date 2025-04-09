@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Ink;
-using static ScientficCalculator.OperatorType;
+using static ScientificCalculator.OperatorType;
 
-namespace ScientficCalculator
+namespace ScientificCalculator
 {
     internal abstract class DisplayToken
     {
@@ -16,6 +16,10 @@ namespace ScientficCalculator
 
     // Used to indicate that a token has a left parameter on the end in the display
     internal interface IFunctionToken;
+    internal interface IContainerToken
+    {
+        public DisplayTokenList InputValue { get; }
+    }
 
     internal class NumeralToken : DisplayToken
     {
@@ -98,7 +102,7 @@ namespace ScientficCalculator
         }
     }
 
-    internal class RootToken : DisplayToken, IFunctionToken
+    internal class RootToken : DisplayToken, IContainerToken, IFunctionToken
     {
         public int Root { get; set; }
         public DisplayTokenList InputValue { get; }
