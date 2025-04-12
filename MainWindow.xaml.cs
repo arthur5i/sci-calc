@@ -47,7 +47,7 @@ namespace ScientificCalculator
                 "Key9" => 9,
                 _ => 0
             };
-            DisplayToken token = new NumeralToken(digit);
+            DisplayToken token = new DigitToken(digit);
             Calculator.Display.AddToken(token);
         }
 

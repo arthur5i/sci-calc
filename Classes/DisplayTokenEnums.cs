@@ -10,4 +10,9 @@ namespace ScientificCalculator
     {
         Add, Subtract, Multiply, Divide, Error
     }
+
+    internal enum PrecessionRule
+    {
+        None, AfterExpression, AfterDigit
+    }
 }

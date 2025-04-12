@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using static ScientificCalculator.PrecessionRule;
 
 namespace ScientificCalculator
 {
@@ -31,7 +32,7 @@ namespace ScientificCalculator
                     if (currentTokenObj is IContainerToken)
                     {
                         IContainerToken containerToken = (IContainerToken)currentTokenObj;
-                        DisplayToken tokenOut = containerToken.InputValue.CurrentToken;
+                        DisplayToken tokenOut = containerToken.InnerList.CurrentToken;
                         _currentTokenCache = tokenOut;
                         return tokenOut;
                     }
@@ -58,8 +59,20 @@ namespace ScientificCalculator
             mainList = new List<DisplayToken>();
         }
 
-        public virtual void AddToken(DisplayToken token)
+        public void AddToken(DisplayToken token)
         {
+            switch (token.PrecessionRule)
+            {
+                case None:
+                    break;
+                case AfterExpression:
+                    if (CurrentToken == null || CurrentToken.IsExpression == false) return;
+                    break;
+                case AfterDigit:
+                    if (CurrentToken is not DigitToken) return;
+                    break;
+            }
+
             mainList.Add(token);
             SetCurrentTokenToEnd();
             OnPropertyChanged();
@@ -109,6 +122,7 @@ namespace ScientificCalculator
             }
         }
 
+        // If the current token is a container, make sure this goes to the end of the container
         public void SetCurrentTokenToEnd()
         {
             _currentTokenCache = null;
