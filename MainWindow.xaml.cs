@@ -65,5 +65,21 @@ namespace ScientificCalculator
             DisplayToken token = new OperatorToken(type);
             Calculator.Display.AddToken(token);
         }
+
+        public void OnClickPoint(object sender, RoutedEventArgs e)
+        {
+            DisplayToken token = new DecimalPointToken();
+            Calculator.Display.AddToken(token);
+        }
+
+        public void OnClickDel(object sender, RoutedEventArgs e)
+        {
+            Calculator.Display.RemoveCurrentToken();
+        }
+
+        public void OnClickAc(object sender, RoutedEventArgs e)
+        {
+            Calculator.Display.ClearTokens();
+        }
     }
 }

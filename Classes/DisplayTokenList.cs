@@ -32,15 +32,16 @@ namespace ScientificCalculator
                     if (currentTokenObj is IContainerToken)
                     {
                         IContainerToken containerToken = (IContainerToken)currentTokenObj;
-                        DisplayToken tokenOut = containerToken.InnerList.CurrentToken;
-                        _currentTokenCache = tokenOut;
-                        return tokenOut;
+                        DisplayToken? tokenOut = containerToken.InnerList.CurrentToken;
+                        if (tokenOut != null)
+                        {
+                            _currentTokenCache = tokenOut;
+                            return tokenOut;
+                        }
                     }
-                    else
-                    {
-                        _currentTokenCache = currentTokenObj;
-                        return currentTokenObj;
-                    }
+
+                    _currentTokenCache = currentTokenObj;
+                    return currentTokenObj;
                 }
             }
         }
@@ -78,29 +79,28 @@ namespace ScientificCalculator
             OnPropertyChanged();
         }
 
-        public double GiveOutputValue()
+        public void RemoveCurrentToken()
+        {
+            if (CurrentToken != null)
+            {
+                mainList.RemoveAt(_currentToken);
+                PreviousToken();
+                OnPropertyChanged();
+            }
+        }
+
+        public void ClearTokens()
+        {
+            mainList.Clear();
+            _currentTokenCache = null;
+            OnPropertyChanged();
+        }
+
+        /*public double GiveOutputValue()
         {
             // This function will trigger all of the calculations and give a resulting float value
             return 1;
-        }
-
-        protected virtual void OnPropertyChanged()
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs("Content"));
-            }
-        }
-
-        public override string ToString()
-        {
-            StringBuilder strOut = new StringBuilder();
-            foreach (DisplayToken token in mainList)
-            {
-                strOut.Append(token.DisplayValue);
-            }
-            return strOut.ToString();
-        }
+        }*/
 
         public void NextToken()
         {
@@ -127,6 +127,24 @@ namespace ScientificCalculator
         {
             _currentTokenCache = null;
             _currentToken = mainList.Count - 1;
+        }
+
+        protected virtual void OnPropertyChanged()
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs("Content"));
+            }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder strOut = new StringBuilder();
+            foreach (DisplayToken token in mainList)
+            {
+                strOut.Append(token.DisplayValue);
+            }
+            return strOut.ToString();
         }
     }
 }
