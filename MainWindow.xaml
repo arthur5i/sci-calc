@@ -26,7 +26,19 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Column="0" Grid.Row="0" Name="InputDisplay" Content="{Binding Path=Display.Content}"></Label>
+            <Label Grid.Column="0" Grid.Row="0"
+                   Name="InputDisplay"
+                   Content="{Binding Path=InputDisplay.Content}"></Label>
+            <Label Grid.Column="0" Grid.Row="1"
+                   Name="OutputDiplay"
+                   Content="{Binding Path=OutputDisplay.Content}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom">
+            </Label>
+            <!--<Label Grid.Column="0" Grid.Row="1"
+               Name="OutputDiplay" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                1234567890
+            </Label>-->
         </Grid>
 
         <Grid Grid.Row="3">
@@ -66,7 +78,7 @@
             <Button Grid.Column="1" Grid.Row="3" Name="KeyPoint" Click="OnClickPoint">.</Button>
             <Button Grid.Column="2" Grid.Row="3" Name="KeySciNot">×10ˣ</Button>
             <Button Grid.Column="3" Grid.Row="3" Name="KeyAns">Ans</Button>
-            <Button Grid.Column="4" Grid.Row="3" Name="KeyEqual">=</Button>
+            <Button Grid.Column="4" Grid.Row="3" Name="KeyEqual" Click="OnClickEquals">=</Button>
         </Grid>
     </Grid>
 </Window>

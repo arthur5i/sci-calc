@@ -47,8 +47,8 @@ namespace ScientificCalculator
                 "Key9" => 9,
                 _ => 0
             };
-            DisplayToken token = new DigitToken(digit);
-            Calculator.Display.AddToken(token);
+            DisplayToken token = new DigitDisplayToken(digit);
+            Calculator.InputDisplay.AddToken(token);
         }
 
         public void OnClickOperator(object sender, RoutedEventArgs e)
@@ -62,24 +62,29 @@ namespace ScientificCalculator
                 "KeyDiv" => Divide,
                 _ => Error
             };
-            DisplayToken token = new OperatorToken(type);
-            Calculator.Display.AddToken(token);
+            DisplayToken token = new OperatorDisplayToken(type);
+            Calculator.InputDisplay.AddToken(token);
         }
 
         public void OnClickPoint(object sender, RoutedEventArgs e)
         {
             DisplayToken token = new DecimalPointToken();
-            Calculator.Display.AddToken(token);
+            Calculator.InputDisplay.AddToken(token);
         }
 
         public void OnClickDel(object sender, RoutedEventArgs e)
         {
-            Calculator.Display.RemoveCurrentToken();
+            Calculator.InputDisplay.RemoveCurrentToken();
         }
 
         public void OnClickAc(object sender, RoutedEventArgs e)
         {
-            Calculator.Display.ClearTokens();
+            Calculator.InputDisplay.ClearTokens();
+        }
+
+        public void OnClickEquals(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
