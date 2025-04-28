@@ -8,7 +8,8 @@ namespace ScientificCalculator
 {
     internal class CalculatorMain
     {
-        public DisplayTokenList Display { get; set; } = new DisplayTokenList();
+        public DisplayTokenList InputDisplay { get; set; } = new DisplayTokenList();
+        public string OutputDisplay { get; set; } = "";
 
         public CalculatorMain()
         {

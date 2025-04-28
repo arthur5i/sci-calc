@@ -11,6 +11,8 @@ namespace ScientificCalculator
 {
     internal class DisplayTokenList : INotifyPropertyChanged
     {
+        #region Properties
+
         private List<DisplayToken> mainList { get; set; }
         private int _currentToken = 0;
         // check to see if this cacheing is handled by code optimisation
@@ -53,7 +55,17 @@ namespace ScientificCalculator
             }
         }
 
+        #endregion
+
+
+        #region Events
+
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        #endregion
+
+
+        #region Functions
 
         public DisplayTokenList()
         {
@@ -70,7 +82,7 @@ namespace ScientificCalculator
                     if (CurrentToken == null || CurrentToken.IsExpression == false) return;
                     break;
                 case AfterDigit:
-                    if (CurrentToken is not DigitToken) return;
+                    if (CurrentToken is not DigitDisplayToken) return;
                     break;
             }
 
@@ -146,5 +158,7 @@ namespace ScientificCalculator
             }
             return strOut.ToString();
         }
+
+        #endregion
     }
 }

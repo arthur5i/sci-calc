@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Documents;
-using System.Windows.Ink;
 using static ScientificCalculator.OperatorType;
 using static ScientificCalculator.PrecessionRule;
 
@@ -26,7 +24,7 @@ namespace ScientificCalculator
         public DisplayTokenList InnerList { get; }
     }
 
-    internal class DigitToken : DisplayToken
+    internal class DigitDisplayToken : DisplayToken
     {
         public int Value { get; set; }
         public override bool IsExpression => true;
@@ -38,7 +36,7 @@ namespace ScientificCalculator
             }
         }
 
-        public DigitToken(int valueIn)
+        public DigitDisplayToken(int valueIn)
         {
             Value = valueIn;
         }
@@ -56,7 +54,7 @@ namespace ScientificCalculator
         }
     }
 
-    internal class OperatorToken : DisplayToken
+    internal class OperatorDisplayToken : DisplayToken
     {
         public override PrecessionRule PrecessionRule => AfterExpression;
         public OperatorType Type { get; set; }
@@ -80,13 +78,13 @@ namespace ScientificCalculator
             }
         }
 
-        public OperatorToken(OperatorType typeIn)
+        public OperatorDisplayToken(OperatorType typeIn)
         {
             Type = typeIn;
         }
     }
 
-    internal class ParenthesisToken : DisplayToken
+    internal class ParenthesisDisplayToken : DisplayToken
     {
         public bool IsRightParenthesis { get; set; }
         // A right parenthesis completes the enclosement of an expression, therefore is treated as an expression
@@ -106,13 +104,13 @@ namespace ScientificCalculator
             }
         }
 
-        public ParenthesisToken(bool isRightParenthesis)
+        public ParenthesisDisplayToken(bool isRightParenthesis)
         {
             IsRightParenthesis = isRightParenthesis;
         }
     }
 
-    internal class RootToken : DisplayToken, IContainerToken, IFunctionToken
+    internal class RootDisplayToken : DisplayToken, IContainerToken, IFunctionToken
     {
         public override bool IsExpression => true;
         public int Root { get; set; }
@@ -125,7 +123,7 @@ namespace ScientificCalculator
             }
         }
 
-        public RootToken(int root = 2)
+        public RootDisplayToken(int root = 2)
         {
             Root = root;
             InnerList = new DisplayTokenList();
