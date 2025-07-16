@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace ScientificCalculator
 {
-    internal enum OperatorType
+    internal enum BinaryOperatorType
     {
-        Add, Subtract, Multiply, Divide, Error
+        Add, Subtract, Multiply, Divide, Power, Error
+    }
+
+    internal enum UnaryOperatorType
+    {
+        Factorial, Sin, Cos, Tan, Error
     }
 
     internal enum PrecessionRule

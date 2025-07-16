@@ -26,19 +26,82 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Column="0" Grid.Row="0"
-                   Name="InputDisplay"
-                   Content="{Binding Path=InputDisplay.Content}"></Label>
-            <Label Grid.Column="0" Grid.Row="1"
-                   Name="OutputDiplay"
-                   Content="{Binding Path=OutputDisplay.Content}"
+            <TextBlock Grid.Column="0" Grid.Row="0"
+                    Name="InputDisplayTextBlock"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom">
-            </Label>
+            </TextBlock>
+            <TextBlock Grid.Column="0" Grid.Row="1"
+                    Name="OutputDiplayTextBlock"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom">
+            </TextBlock>
+            
             <!--<Label Grid.Column="0" Grid.Row="1"
                Name="OutputDiplay" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 1234567890
             </Label>-->
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,0,0,33">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Column="2" Grid.Row="0" Name="KeyLeft" Click="OnClickLeft">🞀</Button>
+            <Button Grid.Column="4" Grid.Row="0" Name="KeyRight" Click="OnClickRight">🞂</Button>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,75,0,108" Grid.RowSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Column="0" Grid.Row="0"></Button>
+            <Button Grid.Column="1" Grid.Row="0"></Button>
+            <Button Grid.Column="4" Grid.Row="0"></Button>
+            <Button Grid.Column="5" Grid.Row="0"></Button>
+
+            <Button Grid.Column="0" Grid.Row="1"></Button>
+            <Button Grid.Column="1" Grid.Row="1" Name="ButtonRoot" Click="OnClickRoot">√</Button>
+            <Button Grid.Column="2" Grid.Row="1"></Button>
+            <Button Grid.Column="3" Grid.Row="1"></Button>
+            <Button Grid.Column="4" Grid.Row="1"></Button>
+            <Button Grid.Column="5" Grid.Row="1"></Button>
+
+            <Button Grid.Column="0" Grid.Row="2"></Button>
+            <Button Grid.Column="1" Grid.Row="2"></Button>
+            <Button Grid.Column="2" Grid.Row="2"></Button>
+            <Button Grid.Column="3" Grid.Row="2"></Button>
+            <Button Grid.Column="4" Grid.Row="2"></Button>
+            <Button Grid.Column="5" Grid.Row="2"></Button>
+
+            <Button Grid.Column="0" Grid.Row="3"></Button>
+            <Button Grid.Column="1" Grid.Row="3"></Button>
+            <Button Grid.Column="2" Grid.Row="3"></Button>
+            <Button Grid.Column="3" Grid.Row="3"></Button>
+            <Button Grid.Column="4" Grid.Row="3"></Button>
+            <Button Grid.Column="5" Grid.Row="3"></Button>
         </Grid>
 
         <Grid Grid.Row="3">

@@ -1,22 +1,29 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ComponentModel;
+using System.Windows.Controls;
 using static ScientificCalculator.PrecessionRule;
 
 namespace ScientificCalculator
 {
-    internal class DisplayTokenList : INotifyPropertyChanged
+    internal class DisplayTokenList : INotifyPropertyChanged, IEnumerable<DisplayToken>
     {
         #region Properties
 
-        private List<DisplayToken> mainList { get; set; }
-        private int _currentToken = 0;
+        protected List<DisplayToken> mainList;
+
+        private int _currentPosition = 0;
+        public int CurrentPosition { get; }
+
         // check to see if this cacheing is handled by code optimisation
-        private DisplayToken? _currentTokenCache;
+        private DisplayToken? currentTokenCache;
+
+
         public DisplayToken? CurrentToken {
             get
             {
@@ -24,36 +31,24 @@ namespace ScientificCalculator
                 {
                     return null;
                 }
-                else if (_currentTokenCache != null)
+                else if (currentTokenCache == null)
                 {
-                    return _currentTokenCache;
+                    currentTokenCache = mainList[_currentPosition];
                 }
-                else
-                {
-                    DisplayToken currentTokenObj = mainList[_currentToken];
-                    if (currentTokenObj is IContainerToken)
-                    {
-                        IContainerToken containerToken = (IContainerToken)currentTokenObj;
-                        DisplayToken? tokenOut = containerToken.InnerList.CurrentToken;
-                        if (tokenOut != null)
-                        {
-                            _currentTokenCache = tokenOut;
-                            return tokenOut;
-                        }
-                    }
 
-                    _currentTokenCache = currentTokenObj;
-                    return currentTokenObj;
-                }
+                return currentTokenCache;
             }
         }
-        public string Content
+
+        private bool? isOnContainerCache = null;
+
+        /*public String Content
         {
             get
             {
                 return ToString();
             }
-        }
+        }*/
 
         #endregion
 
@@ -65,82 +60,270 @@ namespace ScientificCalculator
         #endregion
 
 
-        #region Functions
+        #region Methods
 
         public DisplayTokenList()
         {
             mainList = new List<DisplayToken>();
         }
 
+        /*
+        public DisplayTokenList GetWorkingList(bool secondDeepest = false)
+        {
+            if (CurrentToken != null && IsOnContainer())
+            {
+                IContainerDisplayToken container = (IContainerDisplayToken)CurrentToken;
+                DisplayTokenList innerList = container.InnerList;
+                if (secondDeepest && innerList.IsOnContainer() == false)
+                {
+                    return innerList;
+                }
+
+                return innerList.GetWorkingList();
+            }
+            else
+            {
+                return this;
+            }
+        }*/
+
+        private bool IsOnContainer()
+        {
+            if (currentTokenCache == null || isOnContainerCache == null)
+            {
+                isOnContainerCache = (CurrentToken is IContainerDisplayToken);
+            }
+
+            return (bool)isOnContainerCache;
+        }
+
+        private DisplayTokenList GetInnerList()
+        {
+            try
+            {
+                IContainerDisplayToken container = (IContainerDisplayToken)CurrentToken!;
+                return container.InnerList;
+            }
+            catch (InvalidCastException)
+            {
+                throw;
+            }
+        }
+
         public void AddToken(DisplayToken token)
         {
-            switch (token.PrecessionRule)
+            if (IsOnContainer())
+            {
+                DisplayTokenList innerList = GetInnerList();
+                innerList.AddToken(token);
+                OnPropertyChanged();
+                return;
+            }
+
+            switch (token.Behaviour.PrecessionRule)
             {
                 case None:
                     break;
                 case AfterExpression:
-                    if (CurrentToken == null || CurrentToken.IsExpression == false) return;
+                    if (CurrentToken == null || CurrentToken.Behaviour.IsExpression == false) return;
                     break;
                 case AfterDigit:
-                    if (CurrentToken is not DigitDisplayToken) return;
+                    if (CurrentToken is not DigitToken) return;
                     break;
             }
 
-            mainList.Add(token);
-            SetCurrentTokenToEnd();
+            if (mainList.Count > 0)
+            {
+                mainList.Insert(_currentPosition + 1, token);
+            }
+            else
+            {
+                mainList.Add(token);
+            }
+
+            NextToken();
             OnPropertyChanged();
         }
 
+
         public void RemoveCurrentToken()
         {
+            if (IsOnContainer())
+            {
+                DisplayTokenList innerList = GetInnerList();
+                innerList.RemoveCurrentToken();
+                OnPropertyChanged();
+                return;
+            }
+
             if (CurrentToken != null)
             {
-                mainList.RemoveAt(_currentToken);
+                mainList.RemoveAt(_currentPosition);
                 PreviousToken();
                 OnPropertyChanged();
             }
         }
 
+
         public void ClearTokens()
         {
             mainList.Clear();
-            _currentTokenCache = null;
+            currentTokenCache = null;
+            _currentPosition = 0;
             OnPropertyChanged();
         }
 
-        /*public double GiveOutputValue()
-        {
-            // This function will trigger all of the calculations and give a resulting float value
-            return 1;
-        }*/
 
+        /**
+         * <summary>
+         * Advances the token pointer forwards.
+         * </summary>
+         */
         public void NextToken()
         {
-            _currentTokenCache = null;
-            _currentToken++;
-            if (_currentToken >= mainList.Count)
-            {
-                _currentToken = 0;
-            }
+            MoveToken(1);
         }
 
+
+        /**
+         * <summary>
+         * Advances the token pointer forwards.
+         * </summary>
+         */
         public void PreviousToken()
         {
-            _currentTokenCache = null;
-            _currentToken--;
-            if (_currentToken < 0)
+            MoveToken(-1);
+        }
+
+
+        /**
+         * <summary>
+         * Internal function for moving token pointer.
+         * Returns bool based on whether movement indicates that the pointer has escaped a container token
+         * </summary>
+         */
+        protected bool MoveToken(int amount)
+        {
+            if (IsOnContainer())
             {
-                _currentToken = mainList.Count - 1;
+                DisplayTokenList innerList = GetInnerList();
+                bool escaped = innerList.MoveToken(amount);
+
+                if (escaped == false)
+                {
+                    return false;
+                }
+            }
+
+            ClearCache();
+
+            _currentPosition += amount;
+
+            // Everything that runs after this point will be pointing to a different token, hence why IsOnContainer is run twice
+            if (_currentPosition >= mainList.Count)
+            {
+                _currentPosition = 0;
+                OnPropertyChanged();
+                return true;
+            }
+            else if (_currentPosition < 0)
+            {
+                _currentPosition = mainList.Count - 1;
+                OnPropertyChanged();
+                return true;
+            }
+            else if (IsOnContainer())
+            {
+                IContainerDisplayToken container = (IContainerDisplayToken)CurrentToken!;
+                if (amount >= 1)
+                {
+                    container.InnerList.SetCurrentTokenToStart();
+                }
+                else if (amount <= -1)
+                {
+                    container.InnerList.SetCurrentTokenToEnd();
+                }
+                OnPropertyChanged();
+                return false;
+            }
+            else
+            {
+                OnPropertyChanged();
+                return false;
             }
         }
 
-        // If the current token is a container, make sure this goes to the end of the container
-        public void SetCurrentTokenToEnd()
+
+        public void SetCurrentTokenToStart()
         {
-            _currentTokenCache = null;
-            _currentToken = mainList.Count - 1;
+            ClearCache();
+            _currentPosition = 0;
         }
 
+
+        public void SetCurrentTokenToEnd()
+        {
+            ClearCache();
+            _currentPosition = mainList.Count - 1;
+        }
+
+
+        private void ClearCache()
+        {
+            currentTokenCache = null;
+            isOnContainerCache = null;
+        }
+
+
+        public bool isCurrentPosition(int index)
+        {
+            return (index == _currentPosition);
+        }
+
+
+        /**
+         * <summary>
+         * Temporary solution for displaying the input display.
+         * Future solution will either use LaTeX or a pixel art render engine
+         * </summary>
+         */
+        public String ToString()
+        {
+            StringBuilder strOut = new StringBuilder();
+            int index = 0;
+            foreach (DisplayToken token in mainList)
+            {
+                if (token is IContainerDisplayToken)
+                {
+                    strOut.Append(token.DisplayValue);
+                    IContainerDisplayToken container = (IContainerDisplayToken)token;
+                    strOut.Append("[");
+                    strOut.Append(container.InnerList.ToString());
+                    strOut.Append("]");
+                }
+                else
+                {
+                    if (index == _currentPosition)
+                    {
+                        strOut.Append("<Underline>");
+                        strOut.Append(token.DisplayValue);
+                        strOut.Append("</Underline>");
+                    }
+                    else
+                    {
+                        strOut.Append(token.DisplayValue);
+                    }
+                }
+
+                index++;
+            }
+            
+            return strOut.ToString();
+        }
+
+        #endregion
+
+        #region INotifyPropertyChanged
         protected virtual void OnPropertyChanged()
         {
             if (PropertyChanged != null)
@@ -148,17 +331,56 @@ namespace ScientificCalculator
                 PropertyChanged(this, new PropertyChangedEventArgs("Content"));
             }
         }
+        #endregion
 
-        public override string ToString()
+        #region IEnumerable
+        public IEnumerator<DisplayToken> GetEnumerator()
         {
-            StringBuilder strOut = new StringBuilder();
-            foreach (DisplayToken token in mainList)
+            return new DisplayTokenListEnum(mainList);
+        }
+        private IEnumerator GetEnumerator1()
+        {
+            return this.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator1();
+        }
+        #endregion
+    }
+
+    internal class DisplayTokenListEnum : IEnumerator<DisplayToken>
+    {
+        private List<DisplayToken> mainList;
+        private int currentPosition = -1;
+
+        public DisplayToken Current
+        {
+            get
             {
-                strOut.Append(token.DisplayValue);
+                return mainList[currentPosition];
             }
-            return strOut.ToString();
+        }
+        object IEnumerator.Current
+        {
+            get { return Current; }
         }
 
-        #endregion
+        public DisplayTokenListEnum(List<DisplayToken> mainList)
+        {
+            this.mainList = mainList;
+        }
+
+        public bool MoveNext()
+        {
+            return (++currentPosition < mainList.Count);
+        }
+
+        public void Reset()
+        {
+            currentPosition = -1;
+        }
+
+        void IDisposable.Dispose() { }
     }
 }

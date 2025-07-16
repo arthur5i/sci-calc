@@ -1,33 +1,50 @@
-﻿using System;
+﻿using ScientificCalculator.Classes;
+using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ScientificCalculator.OperatorType;
+using static ScientificCalculator.BinaryOperatorType;
 using static ScientificCalculator.PrecessionRule;
 
 namespace ScientificCalculator
 {
     internal abstract class DisplayToken
     {
-        // Sets boundaries on what kinds of tokens must precede this token
-        public virtual PrecessionRule PrecessionRule => None;
-        // A token that can be operated on
-        public virtual bool IsExpression => false;
         public abstract string DisplayValue { get; }
+
+        public abstract TokenBehaviour Behaviour { get; }
+
+        public abstract void ConversionRoutine(DTConverter c);
     }
 
-    // Used to indicate that a token has a left parameter on the end in the display
-    internal interface IFunctionToken;
-    internal interface IContainerToken
+    internal readonly struct TokenBehaviour
+    {
+        // Struct is initialized with object initializer instead of constructor
+        public TokenBehaviour() { }
+
+        // Sets boundaries on what kinds of tokens must precede this token
+        public PrecessionRule PrecessionRule { get; init; } = None;
+
+        // Does this token represent a numerical value that can be operated on?
+        public bool IsExpression { get; init; } = false;
+    }
+
+    internal interface IContainerDisplayToken
     {
         public DisplayTokenList InnerList { get; }
     }
 
-    internal class DigitDisplayToken : DisplayToken
+    internal class DigitToken : DisplayToken
     {
         public int Value { get; set; }
-        public override bool IsExpression => true;
+
+        public override TokenBehaviour Behaviour { get; } = new()
+        {
+            IsExpression = true
+        };
+
         public override string DisplayValue
         {
             get
@@ -36,15 +53,25 @@ namespace ScientificCalculator
             }
         }
 
-        public DigitDisplayToken(int valueIn)
+        public DigitToken(int valueIn)
         {
             Value = valueIn;
+        }
+
+        public override void ConversionRoutine(DTConverter c)
+        {
+            c.NumberBuilder.Append(DisplayValue);
+            c.NumberBuilderMode = true;
         }
     }
 
     internal class DecimalPointToken : DisplayToken
     {
-        public override PrecessionRule PrecessionRule => AfterDigit;
+        public override TokenBehaviour Behaviour { get; } = new()
+        {
+            PrecessionRule = AfterDigit
+        };
+
         public override string DisplayValue
         {
             get
@@ -52,12 +79,23 @@ namespace ScientificCalculator
                 return ".";
             }
         }
+
+        public override void ConversionRoutine(DTConverter c)
+        {
+            c.NumberBuilder.Append("0.");
+            c.NumberBuilderMode = true;
+        }
     }
 
-    internal class OperatorDisplayToken : DisplayToken
+    internal class OperatorToken : DisplayToken
     {
-        public override PrecessionRule PrecessionRule => AfterExpression;
-        public OperatorType Type { get; set; }
+        public override TokenBehaviour Behaviour { get; } = new()
+        {
+            PrecessionRule = AfterExpression
+        };
+
+        public BinaryOperatorType Type { get; set; }
+
         public override string DisplayValue
         {
             get
@@ -78,17 +116,26 @@ namespace ScientificCalculator
             }
         }
 
-        public OperatorDisplayToken(OperatorType typeIn)
+        public OperatorToken(BinaryOperatorType typeIn)
         {
             Type = typeIn;
         }
+
+        public override void ConversionRoutine(DTConverter c)
+        {
+            TypeModule typeModule = new BinaryOperatorModule(Type);
+            LogicNode node = new SingleNode(typeModule);
+            c.ListOut.AddNode(node);
+        }
     }
 
-    internal class ParenthesisDisplayToken : DisplayToken
+    internal class ParenthesisToken : DisplayToken
     {
         public bool IsRightParenthesis { get; set; }
+
         // A right parenthesis completes the enclosement of an expression, therefore is treated as an expression
-        public override bool IsExpression => IsRightParenthesis;
+        public override TokenBehaviour Behaviour { get; } 
+
         public override string DisplayValue
         {
             get
@@ -104,37 +151,60 @@ namespace ScientificCalculator
             }
         }
 
-        public ParenthesisDisplayToken(bool isRightParenthesis)
+        public ParenthesisToken(bool isRightParenthesis)
         {
             IsRightParenthesis = isRightParenthesis;
+            Behaviour = new()
+            {
+                IsExpression = IsRightParenthesis
+            };
+            
+        }
+
+        public override void ConversionRoutine(DTConverter c)
+        {
+            if (IsRightParenthesis)
+            {
+                c.ListOut.OnInnerList = false;
+            }
+            else
+            {
+                LogicNode newList = new LogicNodeList();
+                c.ListOut.AddNode(newList);
+                c.ListOut.OnInnerList = true;
+            }
+                
         }
     }
 
-    internal class RootDisplayToken : DisplayToken, IContainerToken, IFunctionToken
+    internal class RootToken : DisplayToken, IContainerDisplayToken
     {
-        public override bool IsExpression => true;
-        public int Root { get; set; }
-        public DisplayTokenList InnerList { get; }
+        public override TokenBehaviour Behaviour { get; } = new()
+        {
+            IsExpression = true
+        };
+
         public override string DisplayValue
         {
             get
             {
-                return "sqrt(";
+                return "√";
             }
         }
 
-        public RootDisplayToken(int root = 2)
+        public int Root { get; set; }
+
+        public DisplayTokenList InnerList { get; set; }
+
+        public RootToken(int root = 2)
         {
             Root = root;
             InnerList = new DisplayTokenList();
         }
 
-        /*public double GiveOutputValue()
+        public override void ConversionRoutine(DTConverter c)
         {
-            double listOutput = InnerList.GiveOutputValue();
-            return Math.Pow(listOutput, 1.0 / Root);
-        }*/
-    }
 
-    
+        }
+    }
 }
